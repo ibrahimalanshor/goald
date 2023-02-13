@@ -1,1 +1,4 @@
-module.exports = [...require('./modules/user/user.routes')];
+module.exports = [
+  ...require('./modules/user/user.routes'),
+  ...require('./modules/auth/auth.routes'),
+];
