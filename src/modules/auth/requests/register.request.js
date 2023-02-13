@@ -6,12 +6,12 @@ module.exports = createBodyValidationMiddleware([
     .exists()
     .bail()
     .withMessage('validation.exists')
+    .notEmpty()
+    .bail()
+    .withMessage('validation.empty')
     .isEmail()
     .bail()
-    .withMessage('validation.email')
-    .isAlphanumeric()
-    .bail()
-    .withMessage('validation.alphanumeric'),
+    .withMessage('validation.email'),
   body('username')
     .exists()
     .bail()
@@ -30,7 +30,7 @@ module.exports = createBodyValidationMiddleware([
     .notEmpty()
     .bail()
     .withMessage('validation.empty')
-    .isAlphanumeric({ ignore: ' ' })
+    .isAlphanumeric('en-US', { ignore: ' ' })
     .bail()
     .withMessage('validation.alphanumeric'),
   body('password')

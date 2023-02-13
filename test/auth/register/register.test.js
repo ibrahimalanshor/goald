@@ -21,4 +21,17 @@ describe('resgister test', () => {
     expect(res.body.errors).to.have.property('password');
     expect(res.body.errors).to.have.property('password_confirmation');
   });
+
+  it('should create new user', async () => {
+    const body = {
+      email: 'test@gmail.com',
+      username: 'test',
+      name: 'Test',
+      password: 'password',
+      password_confirmation: 'password',
+    };
+    const res = await supertest(config.url).post(path).send(body).expect(201);
+
+    console.log(res.body);
+  });
 });
