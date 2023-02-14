@@ -3,7 +3,6 @@ const { expect } = require('chai');
 const supertest = require('supertest');
 const { createServer } = require('../../lib/gwik/server');
 const config = require('../../config/server.config');
-const knex = require('../../database/knex');
 const UserService = require('../../src/modules/user/user.service');
 const userTest = require('./resources/user.json');
 
@@ -11,16 +10,17 @@ describe('resgister test', () => {
   const server = createServer();
   const path = '/register';
 
-  let user;
+  let existingUserId;
+  let registeredUserId;
 
   before(async () => {
-    const userId = await UserService.createUser(userTest);
-    user = await UserService.findUserId(userId);
+    existingUserId = await UserService.createUser(userTest);
 
     server.listen();
   });
+
   after(async () => {
-    await UserService.deleteUserId(user.id);
+    await UserService.deleteUserId(existingUserId);
 
     server.stop();
   });
@@ -44,5 +44,24 @@ describe('resgister test', () => {
         password_confirmation: userTest.password,
       })
       .expect(409);
+  });
+
+  it('should return access token', async () => {
+    const res = await supertest(config.url)
+      .post(path)
+      .send({
+        username: 'user',
+        name: 'User',
+        email: 'user@gmail.com',
+        password: 'password',
+        password_confirmation: 'password',
+      })
+      .expect(201);
+
+    expect(res.body).to.have.property('data');
+    expect(res.body.data).to.be.an('object');
+    expect(res.body.data).to.have.property('id');
+
+    registeredUserId = res.body.data.id;
   });
 });

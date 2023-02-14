@@ -3,7 +3,11 @@ const UserService = require('../user/user.service');
 
 async function register(user) {
   try {
-    await UserService.createUser(user);
+    const userId = await UserService.createUser(user);
+
+    return {
+      id: userId,
+    };
   } catch (err) {
     if (err instanceof ConflictException) {
       throw new ConflictException({}, 'auth.register.user-already-exists');
