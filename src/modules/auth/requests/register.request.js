@@ -24,7 +24,6 @@ module.exports = createBodyValidationMiddleware([
     .withMessage('validation.alphanumeric'),
   body('name')
     .exists()
-    .exists()
     .bail()
     .withMessage('validation.exists')
     .notEmpty()
