@@ -1,18 +1,15 @@
 const path = require('path');
 const { validatePort, stringToBoolean } = require('./helpers/validate.helper');
 
+const mode = (process.env.NODE_ENV || 'DEVELOPMENT').toLowerCase();
+
 require('dotenv').config({
-  path: path.resolve(
-    __dirname,
-    '../',
-    `.env.${(process.env.NODE_ENV || 'DEVELOPMENT').toLowerCase()}`
-  ),
+  path: path.resolve(__dirname, '../', `.env.${mode}`),
 });
 
-const port = validatePort(process.env.SERVER_PORT) || 4000;
-
 module.exports = {
-  port,
+  mode,
+  port: validatePort(process.env.SERVER_PORT) || 4000,
   url: process.env.SERVER_URL || 'http://localhost:4000',
   logging: stringToBoolean(process.env.SERVER_LOGGING) ?? true,
   static: {
