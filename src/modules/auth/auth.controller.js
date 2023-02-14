@@ -1,3 +1,5 @@
-exports.register = function register({ req }) {
-  return req.body;
+const AuthService = require('./auth.service');
+
+exports.register = async function register({ req }) {
+  return await AuthService.register(req.body);
 };
