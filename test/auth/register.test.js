@@ -2,6 +2,7 @@ const { describe, it, before, after } = require('mocha');
 const { expect } = require('chai');
 const supertest = require('supertest');
 const { createServer } = require('../../lib/gwik/server');
+const { verifyToken } = require('../../lib/jwt/token');
 const config = require('../../config/server.config');
 const UserService = require('../../src/modules/user/user.service');
 const userTest = require('./resources/user.json');
@@ -21,6 +22,7 @@ describe('resgister test', () => {
 
   after(async () => {
     await UserService.deleteUserId(existingUserId);
+    await UserService.deleteUserId(registeredUserId);
 
     server.stop();
   });
@@ -46,7 +48,7 @@ describe('resgister test', () => {
       .expect(409);
   });
 
-  it('should return access token', async () => {
+  it('should return access and refresh token', async () => {
     const res = await supertest(config.url)
       .post(path)
       .send({
@@ -60,8 +62,11 @@ describe('resgister test', () => {
 
     expect(res.body).to.have.property('data');
     expect(res.body.data).to.be.an('object');
-    expect(res.body.data).to.have.property('id');
+    expect(res.body.data).to.have.property('accessToken');
+    expect(res.body.data).to.have.property('refreshToken');
 
-    registeredUserId = res.body.data.id;
+    const jwtEncoded = await verifyToken(res.body.data.accessToken);
+
+    registeredUserId = jwtEncoded.id;
   });
 });
