@@ -1,4 +1,4 @@
-const { ConflictException } = require('gwik');
+const { ConflictException, NotFoundException } = require('gwik');
 const knex = require('../../../database/knex');
 const { hash } = require('../../../lib/bcrypt/bcrypt');
 
@@ -21,14 +21,27 @@ async function createUser(user) {
   }
 }
 
-async function findUserId(id) {
-  return await knex('users').where('id', id).first();
+async function findUser(column, value) {
+  const user = await knex('users').where(column, value).first();
+
+  if (!user) throw new NotFoundException();
+
+  return user;
 }
 
-async function deleteUserId(id) {
+async function findUserById(id) {
+  return await findUser('id', id);
+}
+
+async function findUserByEmail(email) {
+  return await findUser('email', email);
+}
+
+async function deleteUserById(id) {
   return await knex('users').where('id', id).delete();
 }
 
 exports.createUser = createUser;
-exports.findUserId = findUserId;
-exports.deleteUserId = deleteUserId;
+exports.findUserById = findUserById;
+exports.findUserByEmail = findUserByEmail;
+exports.deleteUserById = deleteUserById;
