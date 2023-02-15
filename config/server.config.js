@@ -9,6 +9,7 @@ require('dotenv').config({
 
 module.exports = {
   mode,
+  key: process.env.SERVER_KEY || 'secret',
   port: validatePort(process.env.SERVER_PORT) || 4000,
   url: process.env.SERVER_URL || 'http://localhost:4000',
   logging: stringToBoolean(process.env.SERVER_LOGGING) ?? true,
