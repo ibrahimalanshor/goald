@@ -1,3 +1,13 @@
 {
-    "hello": "Hello"
+    "http": {
+        "422": "Unprocessable Entity"
+    },
+    "validation": {
+        "exists": "{field} must be exists"
+    },
+    "auth": {
+        "register": {
+            "user-already-exists": "Email or username already exists"
+        }
+    }
 }
