@@ -1,5 +1,6 @@
 const { ConflictException } = require('gwik');
 const knex = require('../../../database/knex');
+const { hash } = require('../../../lib/bcrypt/bcrypt');
 
 async function createUser(user) {
   try {
@@ -7,7 +8,7 @@ async function createUser(user) {
       email: user.email,
       name: user.name,
       username: user.username,
-      password: user.password,
+      password: await hash(user.password),
     });
 
     return id;
