@@ -1,5 +1,10 @@
-const { ConflictException } = require('gwik');
+const {
+  ConflictException,
+  UnauthorizedException,
+  NotFoundException,
+} = require('gwik');
 const { generateToken } = require('../../../lib/jwt/token');
+const { compare } = require('../../../lib/bcrypt/bcrypt');
 const UserService = require('../user/user.service');
 
 async function register(user) {
@@ -16,6 +21,24 @@ async function register(user) {
   }
 }
 
+async function login(credential) {
+  try {
+    const user = await UserService.findUserByEmail(credential.email);
+
+    if (!(await compare(credential.password, user.password))) {
+      throw new UnauthorizedException({}, 'auth.login.incorrect-password');
+    }
+
+    return await generateAuthToken(user.id);
+  } catch (err) {
+    if (err instanceof NotFoundException) {
+      throw new UnauthorizedException({}, 'auth.login.email-not-found');
+    }
+
+    throw err;
+  }
+}
+
 async function generateAuthToken(userId) {
   return {
     accessToken: await generateToken({ id: userId }, { expiresIn: '15m' }),
@@ -24,3 +47,4 @@ async function generateAuthToken(userId) {
 }
 
 exports.register = register;
+exports.login = login;
